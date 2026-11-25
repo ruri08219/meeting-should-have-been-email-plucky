@@ -21,6 +21,9 @@ def main() -> int:
     if "\n" in text or "\r" in text:
         print("error: entry must be exactly one line", file=sys.stderr)
         return 1
+    if any(ord(ch) < 32 for ch in text):
+        print("error: entry contains a control character", file=sys.stderr)
+        return 1
     if len(text) > 200:
         print("error: entry is %d chars, over the 200 limit" % len(text),
               file=sys.stderr)
@@ -30,7 +33,8 @@ def main() -> int:
     out_path = os.path.join(out_dir, "entry.txt")
     with open(out_path, "w", encoding="utf-8", newline="") as f:
         f.write(text)
-    print("wrote %s (%d chars)" % (out_path, len(text)))
+    print("wrote %s (%d chars, %d bytes utf-8)"
+          % (out_path, len(text), len(text.encode("utf-8"))))
     return 0
 
 
